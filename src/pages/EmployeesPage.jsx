@@ -3,8 +3,14 @@ import EmployeeTable from "../components/employees/EmployeeTable";
 import EmployeeModal from "../components/employees/EmployeeModal";
 import { getEmployees, deleteEmployee, createEmployee, updateEmployee } from "../services/employeeService";
 import { showSuccess, showError, showConfirmation } from "../utils/alertService";
+import { useAuth } from "../contexts/AuthContext";
+import { ROLES } from "../utils/constants";
 
 const EmployeesPage = () => {
+    const { authState } = useAuth();
+    const { user } = authState;
+    const isAdmin = user?.role === ROLES.ADMIN;
+
     const [employees, setEmployees] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -67,17 +73,23 @@ const EmployeesPage = () => {
     return (
         <div>
             <h1 className="text-2xl font-bold mb-4">Gestión de Empleados</h1>
-            <button
-                onClick={() => handleOpenModal()}
-                className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
-            >
-                Crear Empleado
-            </button>
+
+            {isAdmin && (
+                <button
+                    onClick={() => handleOpenModal()}
+                    className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                >
+                    Crear Empleado
+                </button>
+            )}
+
             <EmployeeTable
                 employees={employees}
                 onEdit={handleOpenModal}
                 onDelete={handleDeleteEmployee}
+                isAdmin={isAdmin}
             />
+
             <EmployeeModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}

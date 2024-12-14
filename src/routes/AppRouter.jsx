@@ -2,11 +2,13 @@ import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import Sidebar from "../components/generic/Sidebar";
+import { ROLES } from "../utils/constants";
 
 const LoginPage = lazy(() => import("../pages/LoginPage"));
 const EmployeesPage = lazy(() => import("../pages/EmployeesPage"));
 const RequestsPage = lazy(() => import("../pages/RequestsPage"));
 const UnauthorizedPage = lazy(() => import("../pages/UnauthorizedPage"));
+const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
 const Loading = () => <div>Loading...</div>;
 
@@ -19,7 +21,7 @@ const AppRouter = () => (
             <Route
                 path="/employees"
                 element={
-                    <ProtectedRoute requiredRole="admin">
+                    <ProtectedRoute requiredRoles={[ROLES.ADMIN, ROLES.EMPLOYEE]}>
                         <div className="flex">
                             <Sidebar />
                             <div className="flex-1 p-5">
@@ -32,7 +34,7 @@ const AppRouter = () => (
             <Route
                 path="/requests"
                 element={
-                    <ProtectedRoute requiredRole="admin">
+                    <ProtectedRoute requiredRoles={[ROLES.ADMIN, ROLES.EMPLOYEE]}>
                         <div className="flex">
                             <Sidebar />
                             <div className="flex-1 p-5">
@@ -43,7 +45,7 @@ const AppRouter = () => (
                 }
             />
 
-            <Route path="*" element={<UnauthorizedPage />} />
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
     </Suspense>
 );

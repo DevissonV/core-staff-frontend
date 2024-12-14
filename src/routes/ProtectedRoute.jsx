@@ -3,9 +3,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { showError } from "../utils/alertService";
 
-
-const ProtectedRoute = ({ children, requiredRole }) => {
-    const { authState, logout  } = useAuth();
+const ProtectedRoute = ({ children, requiredRoles }) => {
+    const { authState, logout } = useAuth();
     const { token, user } = authState;
 
     const isTokenExpired = (token) => {
@@ -24,7 +23,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         return <Navigate to="/login" replace />;
     }
 
-    if (requiredRole && user?.role !== requiredRole) {
+    if (requiredRoles && !requiredRoles.includes(user?.role)) {
         return <Navigate to="/unauthorized" replace />;
     }
 

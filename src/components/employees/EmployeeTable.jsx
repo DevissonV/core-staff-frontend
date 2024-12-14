@@ -1,4 +1,4 @@
-const EmployeeTable = ({ employees, onEdit, onDelete }) => {
+const EmployeeTable = ({ employees, onEdit, onDelete, isAdmin }) => {
     return (
         <div>
             <table className="w-full border border-gray-300 rounded">
@@ -8,7 +8,9 @@ const EmployeeTable = ({ employees, onEdit, onDelete }) => {
                         <th className="px-4 py-2 border">Nombre</th>
                         <th className="px-4 py-2 border">Fecha de Ingreso</th>
                         <th className="px-4 py-2 border">Salario</th>
-                        <th className="px-4 py-2 border">Acciones</th>
+                        {isAdmin && (
+                            <th className="px-4 py-2 border">Acciones</th>
+                        )}
                     </tr>
                 </thead>
                 <tbody>
@@ -25,20 +27,22 @@ const EmployeeTable = ({ employees, onEdit, onDelete }) => {
                                     currency: "USD",
                                 }).format(employee.salary)}
                             </td>
-                            <td className="px-4 py-2 border flex justify-center gap-2">
-                                <button
-                                    onClick={() => onEdit(employee)}
-                                    className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-                                >
-                                    Editar
-                                </button>
-                                <button
-                                    onClick={() => onDelete(employee.id)}
-                                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                                >
-                                    Eliminar
-                                </button>
-                            </td>
+                            {isAdmin && (
+                                <td className="px-4 py-2 border flex justify-center gap-2">
+                                    <button
+                                        onClick={() => onEdit(employee)}
+                                        className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => onDelete(employee.id)}
+                                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

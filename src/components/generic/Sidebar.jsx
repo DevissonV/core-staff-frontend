@@ -21,7 +21,7 @@ const Sidebar = () => {
                         onClick={() => navigate("/employees")}
                         className="w-full text-left py-2 px-4 hover:bg-gray-700 transition rounded"
                     >
-                        Gestión de Empleados
+                        Empleados
                     </button>
                 </li>
                 <li>
