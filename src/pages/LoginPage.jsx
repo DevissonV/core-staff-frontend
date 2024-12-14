@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login as authServiceLogin } from "../services/authService";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { showSuccess, showError } from "../utils/alertService";
 
 const LoginPage = () => {
     const [form, setForm] = useState({ username: "", password: "" });
@@ -26,8 +27,10 @@ const LoginPage = () => {
           } else if (role === "employee") {
               navigate("/requests");
           }
+          showSuccess("Sesión iniciada");
       } catch (err) {
           setError(err.message || "Error al iniciar sesión");
+          showError("Error al iniciar sesión");
       }
   };
     return (
