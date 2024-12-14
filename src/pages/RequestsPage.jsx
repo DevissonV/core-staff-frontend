@@ -7,97 +7,97 @@ import { useAuth } from "../contexts/AuthContext";
 import { ROLES } from "../utils/constants";
 
 const RequestsPage = () => {
-    const { authState } = useAuth();
-    const { user } = authState;
-    const isAdmin = user?.role === ROLES.ADMIN;
+  const { authState } = useAuth();
+  const { user } = authState;
+  const isAdmin = user?.role === ROLES.ADMIN;
 
-    const [requests, setRequests] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRequest, setSelectedRequest] = useState(null);
+  const [requests, setRequests] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
-    useEffect(() => {
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    try {
+      const data = await getRequests();
+      setRequests(data);
+    } catch (error) {
+      showError("Hubo un error al cargar las solicitudes");
+    }
+  };
+
+  const handleOpenModal = (request = null) => {
+    setSelectedRequest(request);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRequest(null);
+    setIsModalOpen(false);
+  };
+
+  const handleSaveRequest = async (requestData) => {
+    try {
+      if (requestData.id) {
+        await updateRequest(requestData.id, requestData);
+        showSuccess("Solicitud actualizada correctamente");
+      } else {
+        await createRequest(requestData);
+        showSuccess("Solicitud creada correctamente");
+      }
+      fetchRequests();
+      handleCloseModal();
+    } catch (error) {
+      showError("Hubo un error al guardar la solicitud");
+    }
+  };
+
+  const handleDeleteRequest = async (id) => {
+    try {
+      const isConfirmed = await showConfirmation(
+        "¿Estás seguro?",
+        "No podrás revertir esta acción"
+      );
+      if (isConfirmed) {
+        await deleteRequest(id);
         fetchRequests();
-    }, []);
+        showSuccess("Solicitud eliminada correctamente");
+      }
+    } catch (error) {
+      showError("Hubo un error al eliminar la solicitud");
+    }
+  };
 
-    const fetchRequests = async () => {
-        try {
-            const data = await getRequests();
-            setRequests(data);
-        } catch (error) {
-            showError("Hubo un error al cargar las solicitudes");
-        }
-    };
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Gestión de Solicitudes</h1>
 
-    const handleOpenModal = (request = null) => {
-        setSelectedRequest(request);
-        setIsModalOpen(true);
-    };
+      {isAdmin && (
+        <button
+          onClick={() => handleOpenModal()}
+          className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+        >
+          Crear Solicitud
+        </button>
+      )}
 
-    const handleCloseModal = () => {
-        setSelectedRequest(null);
-        setIsModalOpen(false);
-    };
+      <RequestTable
+        requests={requests}
+        onEdit={handleOpenModal}
+        onDelete={handleDeleteRequest}
+        isAdmin={isAdmin}
+      />
 
-    const handleSaveRequest = async (requestData) => {
-        try {
-            if (requestData.id) {
-                await updateRequest(requestData.id, requestData);
-                showSuccess("Solicitud actualizada correctamente");
-            } else {
-                await createRequest(requestData);
-                showSuccess("Solicitud creada correctamente");
-            }
-            fetchRequests();
-            handleCloseModal();
-        } catch (error) {
-            showError("Hubo un error al guardar la solicitud");
-        }
-    };
-
-    const handleDeleteRequest = async (id) => {
-        try {
-            const isConfirmed = await showConfirmation(
-                "¿Estás seguro?",
-                "No podrás revertir esta acción"
-            );
-            if (isConfirmed) {
-                await deleteRequest(id);
-                fetchRequests();
-                showSuccess("Solicitud eliminada correctamente");
-            }
-        } catch (error) {
-            showError("Hubo un error al eliminar la solicitud");
-        }
-    };
-
-    return (
-        <div>
-            <h1 className="text-2xl font-bold mb-4">Gestión de Solicitudes</h1>
-
-            {isAdmin && (
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
-                >
-                    Crear Solicitud
-                </button>
-            )}
-
-            <RequestTable
-                requests={requests}
-                onEdit={handleOpenModal}
-                onDelete={handleDeleteRequest}
-                isAdmin={isAdmin}
-            />
-
-            <RequestModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onSubmit={handleSaveRequest}
-                initialData={selectedRequest}
-            />
-        </div>
-    );
+      <RequestModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSaveRequest}
+        initialData={selectedRequest}
+      />
+    </div>
+  );
 };
 
 export default RequestsPage;

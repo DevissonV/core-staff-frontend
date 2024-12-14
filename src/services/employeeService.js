@@ -4,7 +4,6 @@ import { URL_BACK } from '../utils/constants';
 
 const API_URL = `${URL_BACK}/employees`;
 
-
 const getHeaders = () => {
   const token = getToken();
   if (!token) throw new Error("Token no disponible. Por favor, inicia sesión.");
@@ -63,7 +62,7 @@ export const updateEmployee = async (id, employeeData) => {
     };
 
     const response = await axios.put(`${API_URL}/update-employee/${id}`, updatedEmployeeData, getHeaders());
-    
+
     if (response.data.status) {
       return response.data.data;
     }

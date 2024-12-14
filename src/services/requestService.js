@@ -35,7 +35,7 @@ export const createRequest = async (requestData) => {
       summary: requestData.summary,
       employee_id: requestData.employee_id,
     };
-    
+
     const response = await axios.post(`${API_URL}/create-request`, requestBody, getHeaders());
     if (response.data.status) {
       return response.data.data;
@@ -57,7 +57,7 @@ export const updateRequest = async (id, requestData) => {
     };
 
     const response = await axios.put(`${API_URL}/update-request/${id}`, requestBody, getHeaders());
-    
+
     if (response.data.status) {
       return response.data.data;
     }
